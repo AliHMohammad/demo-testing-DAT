@@ -65,3 +65,19 @@ describe("Test exceptions", () => {
     });
 })
 
+
+describe("Mock functions", () => {
+    it('should apply discount when points > 10', () => {
+        jest.fn().mockReturnValue({points: 11})
+
+        const order = {
+            customerId: 2,
+            totalPrice: 100
+        }
+
+        lib.applyDiscount(order)
+
+        expect(order.totalPrice).toBe(90)
+    });
+})
+
