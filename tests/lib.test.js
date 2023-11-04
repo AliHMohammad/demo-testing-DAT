@@ -1,5 +1,7 @@
 import lib from "../lib";
 import db from "../db"
+import send from "../mail"
+import mail from "../mail";
 
 describe("Should return the correct number", () => {
     it("Should return positive", () => {
@@ -90,6 +92,7 @@ describe("applyDiscount mocking", () => {
         expect(order).toHaveProperty("totalPrice", 90);
         expect(mock).toHaveBeenCalledTimes(1);
         expect(mock).toHaveBeenCalledWith(order.customerId);
+        expect(mock).toHaveReturnedWith({id: 2, points: 15})
     });
 
     it('should not apply discount when customer.points < 10', () => {
@@ -108,6 +111,37 @@ describe("applyDiscount mocking", () => {
         expect(order).toHaveProperty("totalPrice", 50);
         expect(mock).toHaveBeenCalledTimes(1);
         expect(mock).toHaveBeenCalledWith(order.customerId);
+        expect(mock).toHaveReturnedWith({id: 4, points: 2})
+    });
+})
+
+describe("notify customer mocking",  () => {
+    afterEach(() => {
+        // restore replaced property
+        jest.restoreAllMocks();
+    });
+
+    it('should ', () => {
+        const dbMock = jest.spyOn(db, "getCustomerSync").mockReturnValueOnce({
+            id: 5,
+            points: 10
+        })
+
+        const mailMock = jest.spyOn(mail, "send");
+
+        const order = {
+            customerId: 5,
+            totalPrice: 10
+        }
+
+        lib.notifyCustomer(order);
+
+        expect(dbMock).toHaveBeenCalledTimes(1);
+        expect(dbMock).toHaveBeenCalledWith(order.customerId);
+        expect(dbMock).toHaveReturnedWith({id: 5, points: 10});
+        expect(mailMock).toHaveBeenCalledTimes(1);
+        expect(mailMock).toHaveBeenCalledWith(undefined, "Your order was placed successfully.");
+        expect(mailMock).toHaveReturnedWith(undefined);
     });
 })
 

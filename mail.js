@@ -2,4 +2,10 @@ const send = function (to, subject) {
   console.log("Sending an email...");
 };
 
-export default send;
+const mail = {
+  send
+}
+
+export default mail;
+
+
