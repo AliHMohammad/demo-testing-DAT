@@ -1,4 +1,5 @@
 import lib from "../lib";
+import db from "../db"
 
 describe("Should return the correct number", () => {
     it("Should return positive", () => {
@@ -66,18 +67,47 @@ describe("Test exceptions", () => {
 })
 
 
-describe("Mock functions", () => {
-    it('should apply discount when points > 10', () => {
-        jest.fn().mockReturnValue({points: 11})
+describe("applyDiscount mocking", () => {
+
+    afterEach(() => {
+        // restore replaced property
+        jest.restoreAllMocks();
+    });
+
+    it('should apply discount when customer.points > 10', () => {
+        const mock = jest.spyOn(db, "getCustomerSync").mockReturnValueOnce({
+            id: 2,
+            points: 15
+        });
 
         const order = {
             customerId: 2,
             totalPrice: 100
         }
 
-        lib.applyDiscount(order)
+        lib.applyDiscount(order);
 
-        expect(order.totalPrice).toBe(90)
+        expect(order).toHaveProperty("totalPrice", 90);
+        expect(mock).toHaveBeenCalledTimes(1);
+        expect(mock).toHaveBeenCalledWith(order.customerId);
+    });
+
+    it('should not apply discount when customer.points < 10', () => {
+        const mock = jest.spyOn(db, "getCustomerSync").mockReturnValueOnce({
+            id: 4,
+            points: 2
+        });
+
+        const order = {
+            customerId: 4,
+            totalPrice: 50
+        };
+
+        lib.applyDiscount(order);
+
+        expect(order).toHaveProperty("totalPrice", 50);
+        expect(mock).toHaveBeenCalledTimes(1);
+        expect(mock).toHaveBeenCalledWith(order.customerId);
     });
 })
 
