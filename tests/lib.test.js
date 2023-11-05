@@ -4,13 +4,42 @@ import send from "../mail"
 import mail from "../mail";
 
 describe("Should return the correct number", () => {
-    it("Should return positive", () => {
-        expect(lib.absolute(10)).toBe(10);
-    })
 
-    it("Should return positive with a negative number", () => {
-        expect(lib.absolute(-10)).toBe(10)
-    })
+    it('should return positive number', () => {
+        const numbers = [
+            10,
+            58,
+            40,
+            34,
+            66,
+            1,
+            1987,
+            343,
+            99,
+        ]
+
+        numbers.forEach(number => {
+            expect(lib.absolute(number)).toBe(number);
+        })
+    });
+
+    it('should return positive number when given a negative number', () => {
+        const numbers = [
+            -10,
+            -58,
+            -40,
+            -34,
+            -66,
+            -1,
+            -1987,
+            -343,
+            -99,
+        ]
+
+        numbers.forEach(number => {
+            expect(lib.absolute(number)).toBe(-1 * number);
+        })
+    });
 
     it("Should return 0 with 0 parameter", () => {
         expect(lib.absolute(0)).toBe(0);
@@ -18,8 +47,21 @@ describe("Should return the correct number", () => {
 })
 
 describe("Should return a name concatinated with 'welcome'", () => {
+
     it('should return "Welcome Ali"', () => {
-        expect(lib.greet("Ali")).toBe("Welcome Ali");
+        const names = [
+            "Ali",
+            "Martin",
+            "Jacob",
+            "Emily",
+            "Jake",
+            "Niels",
+            "Casper"
+        ]
+
+        names.forEach(name => {
+            expect(lib.greet(name)).toBe(`Welcome ${name}`);
+        })
     });
 
     it('should return "Welcome undefined" when nothing given', () => {
@@ -39,12 +81,17 @@ describe("Should return a currency arr", () => {
 
 describe("Test objects", () => {
     it('should return an object with the given id', () => {
-        const result = lib.getProduct(1);
-        expect(result).toMatchObject({id: 1, price: 10});
-        expect(result).toHaveProperty("id", 1);
-        expect(result).toHaveProperty("price", 10);
+        const objectsArr = [
+           1, 3, 6, 10, 4, 8, 12, 54, 33, 96, 330, 1228
+        ]
 
-        expect(result).toEqual({id: 1, price: 10})
+        objectsArr.forEach(id => {
+            const result = lib.getProduct(id);
+            expect(result).toMatchObject({id: id, price: 10});
+            expect(result).toHaveProperty("id", id);
+            expect(result).toHaveProperty("price", 10);
+            expect(result).toEqual({id: id, price: 10})
+        })
     });
 })
 
